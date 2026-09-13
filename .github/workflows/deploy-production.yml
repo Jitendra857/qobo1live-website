@@ -39,32 +39,56 @@ jobs:
         run: npm ci
 
       # ----------------------------------------
-      # Build landing page
+      # Build Next.js static export
       # ----------------------------------------
       - name: Build Application
         run: npm run build
 
       # ----------------------------------------
-      # Verify build
+      # Verify static export
       # ----------------------------------------
       - name: Verify Build
         run: |
-          echo "Checking landing page build..."
+          echo "=========================================="
+          echo "Checking Next.js static export..."
+          echo "=========================================="
 
-          if [ ! -f "dist/index.html" ]; then
-            echo "ERROR: dist/index.html not found"
+          if [ ! -d "out" ]; then
+            echo "ERROR: out directory not found"
+            echo "Next.js static export failed."
             exit 1
           fi
 
-          echo "Landing page build successful."
-          ls -lah dist
+          if [ ! -f "out/index.html" ]; then
+            echo "ERROR: out/index.html not found"
+            echo "Next.js static export did not generate index.html."
+            exit 1
+          fi
+
+          echo "Next.js static export successful."
+
+          echo "=========================================="
+          echo "Build contents"
+          echo "=========================================="
+
+          ls -lah out
+
+          echo "=========================================="
+          echo "index.html"
+          echo "=========================================="
+
+          ls -lh out/index.html
 
       # ----------------------------------------
       # Create deployment package
       # ----------------------------------------
       - name: Create Deployment Package
         run: |
-          tar -czf qobo1live-landing.tar.gz -C dist .
+          echo "Creating landing page deployment package..."
+
+          tar -czf qobo1live-landing.tar.gz -C out .
+
+          echo "Deployment package:"
           ls -lh qobo1live-landing.tar.gz
 
       # ----------------------------------------
@@ -72,16 +96,18 @@ jobs:
       # ----------------------------------------
       - name: Test VPS SSH Connectivity
         run: |
+          echo "Testing VPS SSH connectivity..."
+
           timeout 15 bash -c \
             '</dev/tcp/${{ secrets.VPS_HOST }}/22' \
-            && echo "VPS port 22 is reachable" \
+            && echo "VPS port 22 is reachable from GitHub Runner" \
             || (
-              echo "ERROR: VPS port 22 is NOT reachable"
+              echo "ERROR: VPS port 22 is NOT reachable from GitHub Runner"
               exit 1
             )
 
       # ----------------------------------------
-      # Upload package
+      # Upload deployment package
       # ----------------------------------------
       - name: Upload Landing Page
         uses: appleboy/scp-action@v1.0.0
@@ -90,10 +116,13 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
+
           source: qobo1live-landing.tar.gz
           target: /tmp
+
           timeout: 30s
           command_timeout: 10m
+
           overwrite: true
 
       # ----------------------------------------
@@ -106,6 +135,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: 22
+
           timeout: 30s
           command_timeout: 10m
 
@@ -117,23 +147,40 @@ jobs:
             echo "=========================================="
 
             # ----------------------------------------
-            # Create deployment directory
+            # Deployment paths
             # ----------------------------------------
-            mkdir -p /var/www/qobo1live-landing/releases
+            DEPLOY_ROOT="/var/www/qobo1live-landing"
+            RELEASES_DIR="$DEPLOY_ROOT/releases"
+
+            echo "Deployment root:"
+            echo "$DEPLOY_ROOT"
+
+            # ----------------------------------------
+            # Create deployment directories
+            # ----------------------------------------
+            echo "Creating deployment directories..."
+
+            mkdir -p "$RELEASES_DIR"
 
             # ----------------------------------------
             # Generate release ID
             # ----------------------------------------
             RELEASE_ID=$(date +%Y%m%d%H%M%S)
-            RELEASE_DIR="/var/www/qobo1live-landing/releases/$RELEASE_ID"
+            RELEASE_DIR="$RELEASES_DIR/$RELEASE_ID"
 
-            echo "Release ID: $RELEASE_ID"
+            echo "Release ID:"
+            echo "$RELEASE_ID"
+
+            echo "Release directory:"
+            echo "$RELEASE_DIR"
 
             mkdir -p "$RELEASE_DIR"
 
             # ----------------------------------------
-            # Verify package
+            # Verify uploaded package
             # ----------------------------------------
+            echo "Checking uploaded package..."
+
             if [ ! -f "/tmp/qobo1live-landing.tar.gz" ]; then
               echo "ERROR: Deployment package not found!"
               exit 1
@@ -142,56 +189,105 @@ jobs:
             ls -lh /tmp/qobo1live-landing.tar.gz
 
             # ----------------------------------------
-            # Extract
+            # Extract deployment
             # ----------------------------------------
+            echo "Extracting landing page..."
+
             tar -xzf /tmp/qobo1live-landing.tar.gz \
               -C "$RELEASE_DIR"
 
             # ----------------------------------------
             # Verify deployment
             # ----------------------------------------
+            echo "Verifying deployed files..."
+
             if [ ! -f "$RELEASE_DIR/index.html" ]; then
-              echo "ERROR: index.html not found!"
+              echo "ERROR: index.html not found after extraction!"
+              echo "Deployment aborted."
+
+              rm -rf "$RELEASE_DIR"
               exit 1
             fi
+
+            echo "Landing page files:"
+            ls -lah "$RELEASE_DIR"
+
+            # ----------------------------------------
+            # Set ownership
+            # ----------------------------------------
+            echo "Setting ownership..."
+
+            chown -R www-data:www-data "$RELEASE_DIR"
 
             # ----------------------------------------
             # Set permissions
             # ----------------------------------------
-            chown -R www-data:www-data "$RELEASE_DIR"
-            chmod -R 755 "$RELEASE_DIR"
+            echo "Setting permissions..."
+
+            find "$RELEASE_DIR" -type d -exec chmod 755 {} \;
+            find "$RELEASE_DIR" -type f -exec chmod 644 {} \;
 
             # ----------------------------------------
-            # Update current symlink
+            # Update current release symlink
             # ----------------------------------------
+            echo "Updating current release..."
+
             ln -sfn "$RELEASE_DIR" \
-              /var/www/qobo1live-landing/current
+              "$DEPLOY_ROOT/current"
 
             # ----------------------------------------
-            # Remove package
+            # Verify current symlink
             # ----------------------------------------
+            echo "Current release:"
+
+            readlink -f "$DEPLOY_ROOT/current"
+
+            if [ ! -f "$DEPLOY_ROOT/current/index.html" ]; then
+              echo "ERROR: current/index.html not found!"
+              exit 1
+            fi
+
+            # ----------------------------------------
+            # Remove uploaded package
+            # ----------------------------------------
+            echo "Removing temporary package..."
+
             rm -f /tmp/qobo1live-landing.tar.gz
 
             # ----------------------------------------
             # Keep latest 3 releases
             # ----------------------------------------
-            cd /var/www/qobo1live-landing/releases
+            echo "Cleaning old releases..."
+
+            cd "$RELEASES_DIR"
 
             ls -1dt */ 2>/dev/null | tail -n +4 | xargs -r rm -rf
 
             # ----------------------------------------
             # Validate Nginx
             # ----------------------------------------
+            echo "Testing Nginx configuration..."
+
             nginx -t
 
             # ----------------------------------------
             # Reload Nginx
             # ----------------------------------------
+            echo "Reloading Nginx..."
+
             systemctl reload nginx
 
+            # ----------------------------------------
+            # Final verification
+            # ----------------------------------------
             echo "=========================================="
-            echo "Landing Page Deployment Completed"
+            echo "Deployment completed successfully"
             echo "=========================================="
 
-            echo "Current release:"
-            readlink -f /var/www/qobo1live-landing/current
+            echo "Current landing page release:"
+
+            readlink -f "$DEPLOY_ROOT/current"
+
+            echo "=========================================="
+            echo "Landing Page Deployment Complete"
+            echo "=========================================="
