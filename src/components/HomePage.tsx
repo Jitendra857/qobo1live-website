@@ -182,16 +182,16 @@ export default function HomePage() {
           <div className="banners-carousel-wrapper">
             <div className="banners-slider" id="bannersSlider">
               <div className="banner-slide">
-                <img src="/images/banner-1.svg" alt="Mega PK Battle Championship" />
+                <img src="/images/banner-1.svg" alt="Bring your energy - Go head-to-head in live PK battles" />
               </div>
               <div className="banner-slide">
-                <img src="/images/banner-2.svg" alt="Become an Agency Partner" />
+                <img src="/images/banner-2.svg" alt="Build your creator community - Connect talent with your agency" />
               </div>
               <div className="banner-slide">
-                <img src="/images/banner-3.svg" alt="First Recharge Bonus Offer" />
+                <img src="/images/banner-3.svg" alt="Make their moment shine - Send gifts, share the love" />
               </div>
               <div className="banner-slide">
-                <img src="/images/banner-4.svg" alt="9-Seat Audio Voice Room Party" />
+                <img src="/images/banner-4.svg" alt="Your voice, your kind of people - Join the conversation in voice rooms" />
               </div>
             </div>
 
@@ -309,13 +309,13 @@ export default function HomePage() {
           <div className="streams-grid">
             <div className="stream-card" data-category="trending">
               <div className="stream-thumbnail">
-                <svg viewBox="0 0 400 500" width="100%" height="100%">
-                  <rect width="400" height="500" fill="#311042" />
-                  <circle cx="200" cy="220" r="110" fill="#8B5CF6" opacity="0.3" />
-                  <text x="200" y="240" fontFamily="sans-serif" fontSize="100" textAnchor="middle">
-                    💃🎤
-                  </text>
-                </svg>
+                <img
+                  src="/images/stream-trending.svg"
+                  alt="Sophia Vibe - Pop Music & Singing Lounge"
+                  width={400}
+                  height={500}
+                  loading="lazy"
+                />
                 <div className="stream-overlay-tags">
                   <span className="live-pill">
                     <span className="dot"></span> LIVE
@@ -337,13 +337,13 @@ export default function HomePage() {
 
             <div className="stream-card" data-category="pk">
               <div className="stream-thumbnail">
-                <svg viewBox="0 0 400 500" width="100%" height="100%">
-                  <rect width="400" height="500" fill="#1E1B4B" />
-                  <circle cx="200" cy="220" r="110" fill="#EF4444" opacity="0.3" />
-                  <text x="200" y="240" fontFamily="sans-serif" fontSize="90" textAnchor="middle">
-                    ⚔️🥊
-                  </text>
-                </svg>
+                <img
+                  src="/images/stream-pk.svg"
+                  alt="Team Alex vs Maya - PK Final Showdown"
+                  width={400}
+                  height={500}
+                  loading="lazy"
+                />
                 <div className="stream-overlay-tags">
                   <span
                     className="live-pill"
@@ -368,13 +368,13 @@ export default function HomePage() {
 
             <div className="stream-card" data-category="audio">
               <div className="stream-thumbnail">
-                <svg viewBox="0 0 400 500" width="100%" height="100%">
-                  <rect width="400" height="500" fill="#064E3B" />
-                  <circle cx="200" cy="220" r="110" fill="#34D399" opacity="0.3" />
-                  <text x="200" y="240" fontFamily="sans-serif" fontSize="90" textAnchor="middle">
-                    🎧🎙️
-                  </text>
-                </svg>
+                <img
+                  src="/images/stream-audio.svg"
+                  alt="Midnight Chill Podcast - Late Night Stories & Music"
+                  width={400}
+                  height={500}
+                  loading="lazy"
+                />
                 <div className="stream-overlay-tags">
                   <span
                     className="live-pill"
@@ -399,13 +399,13 @@ export default function HomePage() {
 
             <div className="stream-card" data-category="vip">
               <div className="stream-thumbnail">
-                <svg viewBox="0 0 400 500" width="100%" height="100%">
-                  <rect width="400" height="500" fill="#4C1D95" />
-                  <circle cx="200" cy="220" r="110" fill="#F472B6" opacity="0.3" />
-                  <text x="200" y="240" fontFamily="sans-serif" fontSize="90" textAnchor="middle">
-                    👑⭐
-                  </text>
-                </svg>
+                <img
+                  src="/images/stream-vip.svg"
+                  alt="King David VIP - Luxury Gift Rain Showdown"
+                  width={400}
+                  height={500}
+                  loading="lazy"
+                />
                 <div className="stream-overlay-tags">
                   <span className="live-pill">
                     <span className="dot"></span> LIVE

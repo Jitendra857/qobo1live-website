@@ -1,0 +1,62 @@
+[
+  {
+    "file": "banner-1.svg",
+    "width": 1200,
+    "height": 500,
+    "status": "same-name-replacement"
+  },
+  {
+    "file": "banner-2.svg",
+    "width": 1200,
+    "height": 500,
+    "status": "same-name-replacement"
+  },
+  {
+    "file": "banner-3.svg",
+    "width": 1200,
+    "height": 500,
+    "status": "same-name-replacement"
+  },
+  {
+    "file": "banner-4.svg",
+    "width": 1200,
+    "height": 500,
+    "status": "same-name-replacement"
+  },
+  {
+    "file": "hero-phone-stream.svg",
+    "width": 500,
+    "height": 850,
+    "status": "same-name-replacement"
+  },
+  {
+    "file": "stream-audio.svg",
+    "width": 400,
+    "height": 500,
+    "status": "new-inline-thumbnail"
+  },
+  {
+    "file": "stream-pk.svg",
+    "width": 400,
+    "height": 500,
+    "status": "new-inline-thumbnail"
+  },
+  {
+    "file": "stream-trending.svg",
+    "width": 400,
+    "height": 500,
+    "status": "new-inline-thumbnail"
+  },
+  {
+    "file": "stream-vip.svg",
+    "width": 400,
+    "height": 500,
+    "status": "new-inline-thumbnail"
+  },
+  {
+    "file": "logo-dummy.svg",
+    "width": 450,
+    "height": 110,
+    "status": "same-name-replacement-existing-app-mark"
+  }
+]
