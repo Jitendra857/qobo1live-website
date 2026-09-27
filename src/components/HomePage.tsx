@@ -738,6 +738,7 @@ export default function HomePage() {
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
                 <a href="#">Agency Agreement</a>
+                <a href="/child-safety">Child Safety Standards</a>
                 <a href="#">Safety &amp; Community Rules</a>
                 <a href="#">Help Center / 24/7 Support</a>
               </div>
